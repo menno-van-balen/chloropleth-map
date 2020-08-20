@@ -38,15 +38,15 @@ const svg = d3
   .attr("width", width);
 
 // define projection
-const projection = d3.geo
-  .albersUsa()
+const projection = d3
+  .geoAlbersUsa()
   .scale(1000)
   .translate(width / 2, height / 2);
 
 // define path
-const path = d3.path().projection(projection);
+const path = d3.geoPath().projection(projection);
 
 // fetch data
-queue().defer(d3.json, usCounties).defer(d3.json, eduData).await(makeMap);
+Promise.all([d3.json(usCounties), d3.json(eduData)]).then(makeMap);
 
 function makeMap(error, counties, education) {}
