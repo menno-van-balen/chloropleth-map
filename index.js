@@ -25,14 +25,30 @@ const tooltip = d3
   .attr("id", "tooltip")
   .style("opacity", 0);
 
-// canvas size
+const mapContainer = d3.select(".map-container");
+
+// div for legend
+mapContainer.append("div").attr("id", "legend");
+
+// define legend canvas size
+const lheight = 60;
+const lwidth = 400;
+const lpadding = 14;
+
+// inject legend
+const svgLegend = d3
+  .select("#legend")
+  .append("svg")
+  .attr("height", lheight)
+  .attr("width", lwidth);
+
+// define map canvas size
 const width = 1200;
 const height = 600;
 const padding = 65;
 
-// inject svg canvas
-const svg = d3
-  .select(".map-container")
+// inject map
+const svg = mapContainer
   .append("svg")
   .attr("height", height)
   .attr("width", width);
@@ -49,4 +65,74 @@ const path = d3.geoPath().projection(projection);
 // fetch data
 Promise.all([d3.json(usCounties), d3.json(eduData)]).then(makeMap);
 
-function makeMap(error, counties, education) {}
+function makeMap(data, error) {
+  if (error) console.error();
+
+  [counties, education] = data;
+
+  // console.log(d3.extent(education, (d) => d.bachelorsOrHigher));
+
+  const minBachelorsOrHigher = d3.min(education, (d) => d.bachelorsOrHigher);
+  const maxBachelorsOrHigher = d3.max(education, (d) => d.bachelorsOrHigher);
+
+  // define color scale
+  const colorScale = d3
+    .scaleThreshold()
+    .domain(
+      d3.range(
+        minBachelorsOrHigher,
+        maxBachelorsOrHigher,
+        (maxBachelorsOrHigher - minBachelorsOrHigher) / colors.length
+      )
+    )
+    .range(colors);
+
+  // define legend x scale and axis
+  const lxScale = d3
+    .scaleLinear()
+    .domain(d3.extent(education, (d) => d.bachelorsOrHigher))
+    .range([lpadding, lwidth - lpadding]);
+
+  const lxAxis = d3.axisBottom(lxScale);
+
+  // inject legend rectangles
+  const lRectWidth = (lwidth - 2 * lpadding) / colors.length;
+
+  svgLegend
+    .selectAll("rect")
+    .data(colors)
+    .enter()
+    .append("rect")
+    .attr("y", lpadding)
+    .attr("x", function (d, i) {
+      return lpadding + i * lRectWidth;
+    })
+    .attr("height", lpadding)
+    .attr("width", lRectWidth)
+    .style("fill", function (d) {
+      return d;
+    });
+
+  // inject legend x axis
+  const tickRange = d3.range(
+    minBachelorsOrHigher,
+    maxBachelorsOrHigher +
+      (maxBachelorsOrHigher - minBachelorsOrHigher) / colors.length,
+    (maxBachelorsOrHigher - minBachelorsOrHigher) / colors.length
+  );
+
+  svgLegend
+    .append("g")
+    .attr("id", "lxAxis")
+    .attr("transform", "translate(0, " + lpadding + ")")
+    .call(
+      lxAxis
+        .tickSize(lpadding)
+        .tickFormat(function (x) {
+          return d3.format(".1f")(x) + "%";
+        })
+        .tickValues(tickRange)
+    )
+    .select(".domain") // remove horizontal axis fill
+    .remove();
+}
