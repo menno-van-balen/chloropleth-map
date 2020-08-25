@@ -144,8 +144,6 @@ function makeMap(data, error) {
       let result = education.filter((i) => {
         return i.fips === d.id;
       });
-      // console.log(result);
-      // console.log(result[0]);
       if (result[0]) {
         return colorScale(result[0].bachelorsOrHigher);
       } else {
@@ -156,14 +154,44 @@ function makeMap(data, error) {
       let result = education.filter((i) => {
         return i.fips === d.id;
       });
-      // console.log(result);
-      // console.log(result[0]);
       if (result[0]) {
         return result[0].bachelorsOrHigher;
       }
     })
     .attr("data-fips", (d) => {
       return d.id;
+    })
+    .on("mouseover", (d) => {
+      tooltip.transition().duration(500).style("opacity", 0.8);
+      tooltip.attr("data-education", () => {
+        let result = education.filter((i) => {
+          return i.fips === d.id;
+        });
+        if (result[0]) {
+          return result[0].bachelorsOrHigher;
+        }
+      });
+      tooltip.html(() => {
+        let result = education.filter((i) => {
+          return i.fips === d.id;
+        });
+        if (result[0]) {
+          return (
+            result[0].area_name +
+            ", " +
+            result[0].state +
+            "<br />" +
+            result[0].bachelorsOrHigher +
+            "%"
+          );
+        }
+      });
+      tooltip
+        .style("left", d3.event.pageX + "px")
+        .style("top", d3.event.pageY - 60 + "px");
+    })
+    .on("mouseout", function (d) {
+      tooltip.transition().duration(200).style("opacity", 0);
     });
 
   svgMap
