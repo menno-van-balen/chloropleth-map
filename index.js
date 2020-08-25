@@ -6,16 +6,28 @@ const eduData =
   "https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json";
 
 // 9 colors for fill
+// const colors = [
+//   "rgb(255,247,251)",
+//   "rgb(236,226,240)",
+//   "rgb(208,209,230)",
+//   "rgb(166,189,219)",
+//   "rgb(103,169,207)",
+//   "rgb(54,144,192)",
+//   "rgb(2,129,138)",
+//   "rgb(1,108,89)",
+//   "rgb(1,70,54)",
+// ];
+
 const colors = [
-  "rgb(255,247,251)",
-  "rgb(236,226,240)",
-  "rgb(208,209,230)",
-  "rgb(166,189,219)",
-  "rgb(103,169,207)",
-  "rgb(54,144,192)",
-  "rgb(2,129,138)",
-  "rgb(1,108,89)",
-  "rgb(1,70,54)",
+  "rgb(255,247,243)",
+  "rgb(253,224,221)",
+  "rgb(252,197,192)",
+  "rgb(250,159,181)",
+  "rgb(247,104,161)",
+  "rgb(221,52,151)",
+  "rgb(174,1,126)",
+  "rgb(122,1,119)",
+  "rgb(73,0,106)",
 ];
 
 // define div for tooltip
@@ -74,8 +86,10 @@ function makeMap(data, error) {
     .scaleThreshold()
     .domain(
       d3.range(
-        minBachelorsOrHigher,
-        maxBachelorsOrHigher,
+        minBachelorsOrHigher +
+          (maxBachelorsOrHigher - minBachelorsOrHigher) / colors.length,
+        maxBachelorsOrHigher -
+          (maxBachelorsOrHigher - minBachelorsOrHigher) / colors.length,
         (maxBachelorsOrHigher - minBachelorsOrHigher) / colors.length
       )
     )
