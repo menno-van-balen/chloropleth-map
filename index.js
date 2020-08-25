@@ -138,7 +138,19 @@ function makeMap(data, error) {
     .enter()
     .append("path")
     .attr("class", "county")
-    .attr("fill", "blue")
+    // fill has to use the colorScale from bachelorsOrHigher where counties.id is the same as education.fips
+    .attr("fill", (d) => {
+      let result = education.filter((i) => {
+        return i.fips === d.id;
+      });
+      // console.log(result);
+      // console.log(result[0]);
+      if (result[0]) {
+        return colorScale(result[0].bachelorsOrHigher);
+      } else {
+        console.log("no match for" + d.id);
+      }
+    })
     .attr("d", path);
 
   svgMap
