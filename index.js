@@ -48,19 +48,13 @@ const height = 600;
 const padding = 65;
 
 // inject map
-const svg = mapContainer
+const svgMap = mapContainer
   .append("svg")
   .attr("height", height)
   .attr("width", width);
 
-// define projection
-const projection = d3
-  .geoAlbersUsa()
-  .scale(1000)
-  .translate(width / 2, height / 2);
-
 // define path
-const path = d3.geoPath().projection(projection);
+const path = d3.geoPath();
 
 // fetch data
 Promise.all([d3.json(usCounties), d3.json(eduData)]).then(makeMap);
@@ -135,4 +129,25 @@ function makeMap(data, error) {
     )
     .select(".domain") // remove horizontal axis fill
     .remove();
+
+  // map
+  svgMap
+    .selectAll("path")
+    .attr("class", "counties")
+    .data(topojson.feature(counties, counties.objects.counties).features)
+    .enter()
+    .append("path")
+    .attr("class", "county")
+    .attr("fill", "blue")
+    .attr("d", path);
+
+  svgMap
+    .append("path")
+    .datum(
+      topojson.mesh(counties, counties.objects.states, function (a, b) {
+        return a !== b;
+      })
+    )
+    .attr("class", "states")
+    .attr("d", path);
 }
