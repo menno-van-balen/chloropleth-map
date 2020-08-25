@@ -1,22 +1,11 @@
 // data sources
 // usCounties = topojson
-const usCounties =
+const usUrl =
   "https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json";
-const eduData =
+const eduDataUrl =
   "https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json";
 
 // 9 colors for fill
-// const colors = [
-//   "rgb(255,247,251)",
-//   "rgb(236,226,240)",
-//   "rgb(208,209,230)",
-//   "rgb(166,189,219)",
-//   "rgb(103,169,207)",
-//   "rgb(54,144,192)",
-//   "rgb(2,129,138)",
-//   "rgb(1,108,89)",
-//   "rgb(1,70,54)",
-// ];
 
 const colors = [
   "rgb(255,247,243)",
@@ -69,12 +58,12 @@ const svgMap = mapContainer
 const path = d3.geoPath();
 
 // fetch data
-Promise.all([d3.json(usCounties), d3.json(eduData)]).then(makeMap);
+Promise.all([d3.json(usUrl), d3.json(eduDataUrl)]).then(makeMap);
 
 function makeMap(data, error) {
   if (error) console.error();
 
-  [counties, education] = data;
+  [usData, education] = data;
 
   // console.log(d3.extent(education, (d) => d.bachelorsOrHigher));
 
@@ -148,12 +137,12 @@ function makeMap(data, error) {
   svgMap
     .selectAll("path")
     .attr("class", "counties")
-    .data(topojson.feature(counties, counties.objects.counties).features)
+    .data(topojson.feature(usData, usData.objects.counties).features)
     .enter()
     .append("path")
     .attr("class", "county")
     .attr("d", path)
-    // fill has to use the colorScale from bachelorsOrHigher where counties.id is the same as education.fips
+    // fill has to use the colorScale from bachelorsOrHigher where usData.id is the same as education.fips
     .attr("fill", (d) => {
       let result = education.filter((i) => {
         return i.fips === d.id;
@@ -161,7 +150,7 @@ function makeMap(data, error) {
       if (result[0]) {
         return colorScale(result[0].bachelorsOrHigher);
       } else {
-        console.log("no match for" + d.id);
+        console.log("no match for: " + d.id);
       }
     })
     .attr("data-education", (d) => {
@@ -211,7 +200,7 @@ function makeMap(data, error) {
   svgMap
     .append("path")
     .datum(
-      topojson.mesh(counties, counties.objects.states, function (a, b) {
+      topojson.mesh(usData, usData.objects.states, function (a, b) {
         return a !== b;
       })
     )
