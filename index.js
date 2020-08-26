@@ -1,5 +1,5 @@
 // data sources
-// usCounties = topojson
+// usUrl = topojson
 const usUrl =
   "https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json";
 const eduDataUrl =
@@ -64,8 +64,6 @@ function makeMap(data, error) {
   if (error) console.error();
 
   [usData, education] = data;
-
-  // console.log(d3.extent(education, (d) => d.bachelorsOrHigher));
 
   const minBachelorsOrHigher = d3.min(education, (d) => d.bachelorsOrHigher);
   const maxBachelorsOrHigher = d3.max(education, (d) => d.bachelorsOrHigher);
