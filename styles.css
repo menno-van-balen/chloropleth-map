@@ -49,10 +49,15 @@ a:hover {
 
 #legend {
   color: white;
+  transform: translate(0px, 50px);
 }
 
 #legend,
 #source {
   float: right;
   margin-right: 200px;
+}
+
+.credits {
+  letter-spacing: 3px;
 }
