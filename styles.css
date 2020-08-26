@@ -1,3 +1,13 @@
+body {
+  text-align: center;
+  background: content-box
+    radial-gradient(rgb(201, 201, 201), rgb(105, 105, 105));
+}
+
+#description {
+  color: white;
+}
+
 .states {
   fill: none;
   stroke: #fff;
@@ -12,6 +22,9 @@
 
 .county:hover {
   cursor: pointer;
+  stroke: black;
+  stroke-width: 3px;
+  stroke-dasharray: 1;
 }
 
 #tooltip {
@@ -22,4 +35,24 @@
   background: rgb(255, 238, 145);
   border: 0px;
   border-radius: 8px;
+}
+
+a {
+  color: aliceblue;
+  text-decoration: none;
+}
+
+a:hover {
+  font-weight: bolder;
+  cursor: pointer;
+}
+
+#legend {
+  color: white;
+}
+
+#legend,
+#source {
+  float: right;
+  margin-right: 200px;
 }
